@@ -11,12 +11,15 @@ namespace ToDoList.Models
     public int id {get; set; }
     public string description {get; set; }
     public string dueDate {get; set; }
+    public int category_Id {get; set; }
 
-    public Item(string Description, string newDueDate, int Id = 0)
+    public Item(string Description, string newDueDate, int newCategory_Id, int Id = 0)
     {
       id = Id;
       description = Description;
       dueDate = newDueDate;
+      category_Id = newCategory_Id;
+
     }
 
     public static List<Item> GetAll()
@@ -48,7 +51,7 @@ namespace ToDoList.Models
       conn.Open();
 
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO items (description, dueDate) VALUES (@itemDescription, @itemDueDate);";
+      cmd.CommandText = @"INSERT INTO items (description, category_Id, dueDate) VALUES (@itemDescription, @itemCategory_Id, @itemDueDate);";
 
       MySqlParameter Description = new MySqlParameter();
       Description.ParameterName = "@itemDescription";
@@ -60,6 +63,11 @@ namespace ToDoList.Models
       newDueDate.ParameterName = "@itemDueDate";
       newDueDate.Value = this.dueDate;
       cmd.Parameters.Add(newDueDate);
+
+      MySqlParameter categoryId = new MySqlParameter();
+       categoryId.ParameterName = "@itemCategory_Id";
+       categoryId.Value = this.categoryId;
+       cmd.Parameters.Add(categoryId);
 
       cmd.ExecuteNonQuery();
       id = (int) cmd.LastInsertedId;
@@ -120,6 +128,8 @@ namespace ToDoList.Models
 
           Item newItem = (Item) otherItem;
           bool idEquality = (this.id == newItem.id);
+          bool categoryEquality = (this.catgegory_Id == newItem.category_Id);
+
 
           bool descriptionEquality = (this.description == newItem.description);
           return (descriptionEquality && idEquality);
